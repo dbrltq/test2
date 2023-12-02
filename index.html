@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        body {background-image: url(bg.png); 
+            background-size: cover; 
+            background-attachment: fixed;
+        }
+
+        .do {text-align: center; margin: 50px; margin-top: 130px;}
+        #display {
+            text-align: center;
+            justify-content: center;
+            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+        }
+        #words {
+            justify-content: center;
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            width: 800px; height: 550px;
+            border-radius: 6px;
+            border: 2px solid #888888;
+            font-size: 1.2rem;
+            margin: 0 auto;
+        }
+
+        span {
+            padding: 20px;
+            border-radius: 4px;
+            display: inline-block;
+            width: calc(100% / 6 - 10);
+        }
+
+        #inputField {
+            padding: 5px;
+            height: 20px;
+            width: 150px;
+            margin-top: 50px;
+            text-align: center;
+            align-items: center;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        #timer {
+            margin-top: 10px;
+        }
+    </style>
+    <title>랜덤 단어와 색상 선택</title>
+</head>
+<body>
+    <h1 class="do">글자의 색을 적으세요!</h1>
+    <div id="display">
+        <div id="words"></div>
+        <input type="text" id="inputField" placeholder="색상을 입력하세요">
+        <div id="result"></div>
+        <div id="timer"></div>
+    </div>
+
+
+<script>
+    var count = 30;
+    var counter = setInterval(timer, 1000);
+
+    var words = ["빨강", "노랑", "파랑", "초록"];
+    var colors = ["red", "orange", "blue", "green"];
+    var totalCombinations = 42;
+    var generatedCombinations = 0;
+
+    var wordDiv = document.getElementById("words");
+    var inputField = document.getElementById("inputField");
+    var resultDiv = document.getElementById("result");
+    var timerDiv = document.getElementById("timer");
+
+    var correctCount = 0;
+    var combinationColors = [];
+    var colorIndex = 0;
+
+    while (generatedCombinations < totalCombinations) {
+        var randomWordIndex = Math.floor(Math.random() * words.length);
+        var randomColorIndex = Math.floor(Math.random() * colors.length);
+
+        var selectedWord = words[randomWordIndex];
+        var selectedColor = colors[randomColorIndex];
+
+        combinationColors.push(selectedColor);
+
+        var span = document.createElement("span");
+        span.style.color = selectedColor;
+        span.textContent = selectedWord;
+        wordDiv.appendChild(span);
+
+        generatedCombinations++;
+    }
+
+    function timer() {
+        count--;
+
+        if (count <= 0) {
+            clearInterval(counter);
+            resultDiv.textContent += `\n30초가 지났습니다. 최종 결과: ${correctCount}개를 맞추었습니다.`;
+        } else {
+            timerDiv.textContent = `남은 시간: ${count}초`;
+        }
+    }
+
+    inputField.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            var inputValue = inputField.value.trim();
+            var selectedColor = combinationColors[colorIndex];
+
+            if (inputValue && inputValue === selectedColor) {
+                resultDiv.textContent = (`${colorIndex + 1}번째 단어의 색상 일치합니다!`);
+                correctCount++;
+            } else {
+                resultDiv.textContent = (`${colorIndex + 1}번째 단어의 색상 불일치합니다. 입력값: ${inputValue}, 정답: ${selectedColor}`);
+            }
+
+            inputField.value = "";
+            colorIndex++;
+
+            if (colorIndex === totalCombinations) {
+                clearInterval(counter);
+                resultDiv.textContent += `\n모든 입력이 완료되었습니다. 최종 결과: ${correctCount}개를 맞추었습니다.`;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
